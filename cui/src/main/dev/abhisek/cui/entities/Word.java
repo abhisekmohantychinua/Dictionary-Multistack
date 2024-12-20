@@ -28,6 +28,22 @@ public class Word {
         this.description = description;
     }
 
+    public static String toCsv(Word word){
+        return String.format("%s,%s\n", word.name, word.description);
+    }
+    public static Word fromCsv(String csv){
+        String[] words = csv.split(",");
+        return new Word(words[0], words[1]);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof Word word){
+            return name.equals(word.name) && description.equals(word.description);
+        }
+        return false;
+    }
+
     @Override
     public String toString() {
         return "name='" + name + '\'' +
