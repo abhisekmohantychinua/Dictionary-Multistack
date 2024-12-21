@@ -8,7 +8,7 @@ import java.util.List;
 
 public class WordRepository {
     private static final String STORAGE_PATH = "./store.txt";
-    private  File file;
+    private File file;
 
     public WordRepository() {
         try {
@@ -42,11 +42,11 @@ public class WordRepository {
 
     private void write(Word word) {
         try {
-            FileOutputStream fos = new FileOutputStream(file, true);
+            FileWriter writer = new FileWriter(file, true);
             String wordAsCsv = Word.toCsv(word);
-            fos.write(wordAsCsv.getBytes());
-            fos.flush();
-            fos.close();
+            writer.write(wordAsCsv);
+            writer.flush();
+            writer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -55,12 +55,12 @@ public class WordRepository {
 
     public List<Word> getAll() {
         try {
-            FileInputStream fis = new FileInputStream(file);
-            byte[] bytes = fis.readAllBytes();
-            fis.close();
+
+            FileReader fileReader = new FileReader(file);
+            int b;
             StringBuilder line = new StringBuilder();
             List<String> lines = new ArrayList<>();
-            for (byte b : bytes) {
+            while ((b = fileReader.read()) != -1) {
                 char c = (char) b;
                 if (c == '\n') {
                     lines.add(line.toString());
@@ -69,6 +69,7 @@ public class WordRepository {
                     line.append(c);
                 }
             }
+            fileReader.close();
             List<Word> words = new ArrayList<>();
             for (String s : lines) {
                 Word word = Word.fromCsv(s);
@@ -87,14 +88,14 @@ public class WordRepository {
             words.remove(word);
 
             StringBuilder text = new StringBuilder();
-            FileOutputStream fos = new FileOutputStream(file);
+            FileWriter writer = new FileWriter(file);
             for (Word w : words) {
                 text.append(Word.toCsv(w));
             }
-            fos.write(text.toString().getBytes());
-            fos.flush();
-            fos.close();
-        }catch (IOException e){
+            writer.write(text.toString());
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
